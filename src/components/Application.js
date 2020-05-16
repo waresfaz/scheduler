@@ -5,7 +5,7 @@ import axios from 'axios';
 import "components/Application.scss";
 import DayList from "./DayList";
 import Appointment from "components/Appointment";
-import { getAppointmentsForDay } from "helpers/selectors";
+import { getAppointmentsForDay, getInterview } from "helpers/selectors";
 
 // const appointments = [
 //   {
@@ -62,7 +62,8 @@ export default function Application(props) {
   const [state, setState] = useState({
     day: "Monday",
     days: [],
-    appointments: {}
+    appointments: {},
+    interviewers: {}
   });
 
   const setDay = day => setState({ ...state, day });
@@ -75,21 +76,39 @@ export default function Application(props) {
       // setDays(response.data)
       Promise.all([
         Promise.resolve(axios.get(`http://localhost:8001/api/days`)),
-        Promise.resolve(axios.get(`http://localhost:8001/api/appointments`))
+        Promise.resolve(axios.get(`http://localhost:8001/api/appointments`)),
+        Promise.resolve(axios.get(`http://localhost:8001/api/interviewers`))
       ]).then(all => {
         console.log(all[0]); // first
         console.log(all[1]); // second
-        const [first, second] = all;
-        console.log(first.data, second.data);
+        const [first, second, third] = all;
+        console.log(first.data, second.data, third.data);
 
         setState(prev => ({
           ...prev,
           days: all[0].data,
-          appointments: all[1].data
+          appointments: all[1].data,
+          interviewers: all[2].data
         }));
       });
     })
   }, [])
+
+  const appointments = getAppointmentsForDay(state, state.day);
+
+  const schedule = appointments.map((appointment) => {
+    const interview = getInterview(state, appointment.interview);
+
+    return (
+      <Appointment
+        key={appointment.id}
+        id={appointment.id}
+        time={appointment.time}
+        interview={interview}
+      />
+    );
+  });
+
 
 
   return (
@@ -112,12 +131,7 @@ export default function Application(props) {
       </section>
 
       <section className="schedule">
-      {getAppointmentsForDay(state, state.day).map(appointment => {
-        return (
-          <Appointment id={appointment.id} {...appointment} />
-        );
-      })}
-      <Appointment id="last" time="6pm" /> 
+        {schedule}
       </section>
       
     </main>
