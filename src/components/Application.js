@@ -7,57 +7,26 @@ import DayList from "./DayList";
 import Appointment from "components/Appointment";
 import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
 
-// const appointments = [
-//   {
-//     id: 1,
-//     time: "12pm",
-//   },
-//   {
-//     id: 2,
-//     time: "1pm",
-//     interview: {
-//       student: "Lydia Miller-Jones",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png",
-//       }
-//     }
-//   },
-//   {
-//     id: 3,
-//     time: "2pm",
-//     interview: {
-//       student: "Bobby Bobson",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png",
-//       }
-//     }
-//   },
-//   {
-//     id: 4,
-//     time: "4pm",
-//   },
-//   {
-//     id: 5,
-//     time: "5pm",
-//     interview: {
-//       student: "Dawood Dawoodi",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png",
-//       }
-//     }
-//   }
-// ];
-
 
 export default function Application(props) {
-  // const [day, setDay] = useState("Monday");
-  // const [days, setDays] = useState([]);
+
+  function bookInterview(id, interview) {
+    console.log(interview)
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    return axios.put(`http://localhost:8001/api/appointments/${id}`, {interview}).then(() =>
+      setState({
+        ...state,
+        appointments
+      })
+    );
+  } 
 
   const [state, setState] = useState({
     day: "Monday",
@@ -67,7 +36,6 @@ export default function Application(props) {
   });
 
   const setDay = day => setState({ ...state, day });
-  // const setDays = days => setState(prev => ({ ...prev, days }));
   
   
   useEffect(() => {
@@ -107,6 +75,7 @@ export default function Application(props) {
         time={appointment.time}
         interview={interview}
         interviewers={interviewers}
+        bookInterview={bookInterview}
       />
     );
   });
