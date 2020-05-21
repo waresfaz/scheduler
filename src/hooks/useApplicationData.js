@@ -13,6 +13,12 @@ export default function useApplicationData(props) {
       ...state.appointments,
       [id]: appointment
     };
+    const updateSpots = state.days.forEach(day => {
+      if (day.name === state.day) {
+        day.spots--;
+      }
+      return day;
+    });
     return axios.put(`/api/appointments/${id}`, {interview}).then(() =>
       setState({
         ...state,
@@ -30,6 +36,12 @@ export default function useApplicationData(props) {
       ...state.appointments,
       [id]: appointment
     };
+    const updateSpots = state.days.forEach(day => {
+      if (day.name === state.day) {
+      day.spots++;
+    }
+    return day;
+  });
     return axios.delete(`/api/appointments/${id}`, {appointment}).then(() =>
       setState({
         ...state,
@@ -50,8 +62,6 @@ export default function useApplicationData(props) {
   
   useEffect(() => {
     axios.get(`/api/days`).then(response => {
-      // console.log(response.data)
-      // setDays(response.data)
       Promise.all([
         Promise.resolve(axios.get(`/api/days`)),
         Promise.resolve(axios.get(`/api/appointments`)),

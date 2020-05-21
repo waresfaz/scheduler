@@ -39,10 +39,6 @@ export default function Appointment(props) {
   }
 
   function deleteInterview(id) {
-    // const interview ={
-    //   student: name,
-    //   interviewer
-    // };
     transition(DELETING, true)
     props.cancelInterview(props.id)
     .then(() => transition(EMPTY))
@@ -65,8 +61,6 @@ export default function Appointment(props) {
 
       {mode === CREATE && (
         <Form
-          // name={props.interview.student}
-          // interviewer={props.interview.interviewer.id}
           interviewers={props.interviewers}
           onSave={save}
           onCancel={() => back()}
