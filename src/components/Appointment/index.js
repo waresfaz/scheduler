@@ -26,11 +26,10 @@ export default function Appointment(props) {
     props.interview ? SHOW : EMPTY
   );
 
-  function save(interviewer, name) {
-    console.log(name)
+  function save(name, interviewer) {
     const interview = {
-      student: interviewer,
-      interviewer: name
+      student: name,
+      interviewer: interviewer
     };
     transition(SAVING, true)
     props.bookInterview(props.id, interview)
@@ -44,7 +43,7 @@ export default function Appointment(props) {
     .then(() => transition(EMPTY))
     .catch(error => transition(ERROR_DELETE, true))
   }
-
+  console.log("this is props.interview", props.interview);
   return (
     <article className="appointment">
 

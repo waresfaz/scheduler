@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import "./InterviewerListItem.scss";
 
 export default function InterviewerListItem(props) {
+
   const interviewerClass = classnames("interviewers__item", {
     "interviewers__item--selected": props.selected
   });

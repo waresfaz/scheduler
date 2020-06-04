@@ -1,29 +1,48 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+import { getAppointmentsForDay } from "helpers/selectors";
+import Appointment from "components/Appointment";
+
 export default function useApplicationData(props) {
 
   function bookInterview(id, interview) {
-    console.log(interview)
+
+     // force rejects promise if validation is not met (either value is left empty)
+     if (!interview.student || !interview.interviewer) {
+      return Promise.reject()
+    }
+    
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
     };
+    
     const appointments = {
       ...state.appointments,
       [id]: appointment
     };
-    const updateSpots = state.days.forEach(day => {
+    const newState = {
+      ...state,
+      appointments
+    }
+    // this updates the spots count
+    const appointmentsForDay = getAppointmentsForDay(newState, newState.day);
+
+    const count = appointmentsForDay.filter(appointment => {
+      return appointment.interview
+    }).length
+    console.log(count)
+
+    newState.days = state.days.map(day => {
       if (day.name === state.day) {
-        day.spots--;
+      day.spots = appointmentsForDay.length - count;
       }
-      return day;
+      return day
     });
+
     return axios.put(`/api/appointments/${id}`, {interview}).then(() =>
-      setState({
-        ...state,
-        appointments
-      })
+      setState(newState)
     );
   } 
 
